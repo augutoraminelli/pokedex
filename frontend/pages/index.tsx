@@ -1,39 +1,38 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import "antd/dist/antd.css";
 
 import { Button } from "antd";
-import { useEffect } from "react";
 import api from "../service/api";
+import ITypes from "../interfaces/IResponseApi";
 
-const Home: NextPage = () => {
+const Home = ({ types }: ITypes) => {
   return (
     <div>
       <Head>
         <title>Homepage</title>
       </Head>
       <main>
-        <Button type="primary" shape="circle">
-          Hellor World!
-        </Button>
+        {types &&
+          types.map((type, i) => (
+            <div key={i}>
+              <Button type="primary" value={type}>
+                {type}
+              </Button>
+            </div>
+          ))}
       </main>
     </div>
   );
-
-  // export async function getStaticProps() {
-  //   // Call an external API endpoint to get posts.
-  //   // You can use any data fetching library
-  //   const res = await api("https://.../posts");
-  //   const posts = await res.json();
-
-  //   // By returning { props: { posts } }, the Blog component
-  //   // will receive `posts` as a prop at build time
-  //   return {
-  //     props: {
-  //       posts,
-  //     },
-  //   };
-  // }
 };
+
+export async function getStaticProps() {
+  const types: ITypes = await api.get("/types").then((res) => res.data.data);
+
+  return {
+    props: {
+      types,
+    },
+  };
+}
 
 export default Home;
